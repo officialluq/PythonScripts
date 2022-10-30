@@ -15,7 +15,7 @@ class IsReady(enum.Enum):  # creating an enum structure for status of philosophe
     not_ready = 1
 
 
-class Dining:
+class DiningTable:
     def __init__(self, number_of_philosphers):
         self.philosphers = number_of_philosphers
         self.number_of_forks = number_of_philosphers
@@ -35,17 +35,21 @@ class Philosopher:
         self.hungry_coef = 50
 
     def take_fork(self):
-        if self.right_hand != 0:
+        if self.right_hand == 0:
             self.dining_table.forks[self.position % 5].acquire()
+            self.right_hand = 1
+            print(f"\r\n{self.name}, took fork {self.position % 5}")
             return IsReady.not_ready
-        elif self.left_hand != 0:
+        elif self.left_hand == 0:
             self.dining_table.forks[(self.position - 1) % 5].acquire()
+            self.left_hand = 1
+            print(f"\r\n{self.name}, took fork {(self.position - 1) % 5}")
             return IsReady.not_ready
-        return IsReady.ready
 
     def eat_food(self):
-        if self.right_hand and self.left_hand:
+        if self.right_hand and self.left_hand and self:
             self.status = Status.eating
+            # print(f'\r\n{self.name} -> hungry indicator : {self.hungry_coef}')
             if self.hungry_coef != 0:
                 self.hungry_coef -= 1
                 return IsReady.not_ready
@@ -54,14 +58,18 @@ class Philosopher:
             return IsReady.not_ready
 
     def drop_forks(self):
-        if self.right_hand and self.left_hand:
+        if self.right_hand and self.left_hand and self.hungry_coef == 0:
+            print(f'\r\n{self.name} is leaving his forks')
             self.dining_table.forks[self.position % 5].release()
+            self.right_hand = 0
             self.dining_table.forks[(self.position - 1) % 5].release()
+            self.left_hand = 0
             self.status = Status.thinking
 
     def sit_under_table(self):
         print(f'\r\nHello, I am {self.name}')  # introducing himself
-        while (self.hungry_coef != 0) and (self.status == Status.thinking):
+        while self.hungry_coef != 0:
+            sleep(0.1)
             self.take_fork()
             self.eat_food()
             self.drop_forks()
@@ -72,10 +80,11 @@ if __name__ == "__main__":
     number_of_philosophers = 5
     names = ["Adam", "Wiesiek", "Zbigniew", "Jacek", "Bogus"]
     threads = []
-    dining_table = Dining(number_of_philosphers=number_of_philosophers)
+    dining_table = DiningTable(number_of_philosphers=number_of_philosophers)
     for i in range(number_of_philosophers):
         Philosopher(names[i], dining_table)
     for i in range(5):
-        print(i)
         threads.append(Thread(target=dining_table.sits[i].sit_under_table))
         threads[-1].start()
+    for i in range(5):
+        threads[i].join()

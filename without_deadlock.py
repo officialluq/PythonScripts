@@ -15,7 +15,7 @@ class IsReady(enum.Enum):  # creating an enum structure for status of philosophe
     not_ready = 1
 
 
-class Dining:
+class DiningTable:
     def __init__(self, number_of_philosphers):
         self.philosphers = number_of_philosphers
         self.number_of_forks = number_of_philosphers
@@ -64,7 +64,7 @@ class Philosopher:
     def eat_food(self):
         if self.right_hand and self.left_hand and self:
             self.status = Status.eating
-            print(f'{self.name} -> hungry : {self.hungry_coef}')
+            #print(f'\r\n{self.name} -> hungry indicator : {self.hungry_coef}')
             if self.hungry_coef != 0:
                 self.hungry_coef -= 1
                 return IsReady.not_ready
@@ -74,7 +74,7 @@ class Philosopher:
 
     def drop_forks(self):
         if self.right_hand and self.left_hand and self.hungry_coef == 0 :
-            print(f'{self.name} is leaving his forks')
+            print(f'\r\n{self.name} is leaving his forks')
             self.dining_table.forks[self.position % 5].release()
             self.right_hand = 0
             self.dining_table.forks[(self.position - 1) % 5].release()
@@ -95,7 +95,7 @@ if __name__ == "__main__":
     number_of_philosophers = 5
     names = ["Adam", "Wiesiek", "Zbigniew", "Jacek", "Bogus"]
     threads = []
-    dining_table = Dining(number_of_philosphers=number_of_philosophers)
+    dining_table = DiningTable(number_of_philosphers=number_of_philosophers)
     for i in range(number_of_philosophers):
         Philosopher(names[i], dining_table)
     for i in range(5):

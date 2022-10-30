@@ -35,20 +35,34 @@ class Philosopher:
         self.hungry_coef = 50
 
     def take_fork(self):
-        if self.right_hand == 0:
-            self.dining_table.forks[self.position % 5].acquire()
-            self.right_hand = 1
-            print(f"{self.name}, took fork {self.position % 5}")
-            return IsReady.not_ready
-        elif self.left_hand == 0:
-            self.dining_table.forks[(self.position - 1) % 5].acquire()
-            self.left_hand = 1
-            print(f"{self.name}, took fork {(self.position -1) % 5}")
-            return IsReady.not_ready
+        if self.position % 2:
+            if self.right_hand == 0:
+                self.dining_table.forks[(self.position - 1) % 5].acquire()
+                self.right_hand = 1
+                print(f"\r\n{self.name}, took fork {(self.position -1) % 5}")
+
+                return IsReady.not_ready
+            elif self.left_hand == 0:
+                self.dining_table.forks[self.position % 5].acquire()
+                self.left_hand = 1
+                print(f"\r\n{self.name}, took fork {(self.position) % 5}")
+                return IsReady.not_ready
+        else:
+            if self.right_hand == 0:
+                self.dining_table.forks[self.position % 5].acquire()
+                self.right_hand = 1
+                print(f"\r\n{self.name}, took fork {self.position % 5}")
+                return IsReady.not_ready
+            elif self.left_hand == 0:
+                self.dining_table.forks[(self.position - 1) % 5].acquire()
+                self.left_hand = 1
+                print(f"\r\n{self.name}, took fork {(self.position -1) % 5}")
+                return IsReady.not_ready
+
         return IsReady.ready
 
     def eat_food(self):
-        if self.right_hand and self.left_hand:
+        if self.right_hand and self.left_hand and self:
             self.status = Status.eating
             print(f'{self.name} -> hungry : {self.hungry_coef}')
             if self.hungry_coef != 0:
@@ -59,7 +73,8 @@ class Philosopher:
             return IsReady.not_ready
 
     def drop_forks(self):
-        if self.right_hand and self.left_hand:
+        if self.right_hand and self.left_hand and self.hungry_coef == 0 :
+            print(f'{self.name} is leaving his forks')
             self.dining_table.forks[self.position % 5].release()
             self.right_hand = 0
             self.dining_table.forks[(self.position - 1) % 5].release()
@@ -68,7 +83,7 @@ class Philosopher:
 
     def sit_under_table(self):
         print(f'\r\nHello, I am {self.name}')  # introducing himself
-        while (self.hungry_coef != 0) and (self.status == Status.thinking):
+        while self.hungry_coef != 0:
             sleep(0.1)
             self.take_fork()
             self.eat_food()
