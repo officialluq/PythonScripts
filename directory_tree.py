@@ -8,7 +8,7 @@ def list_files(startpath):
         print('{}{}/'.format(indent, os.path.basename(root)))
         subindent = ' ' * 4 * (level + 1)
         for f in files:
-            print('{}{}'.format(subindent, f))
+            print(f'{subindent}{f}')
 
 
 list_files(os.getcwd())

@@ -17,6 +17,26 @@ def bubble_sort(array):
 
     return array
 
+# def test(array):
+#     count = len(array)
+#     for i in range(count):
+#         if()
+#         array[i]
+
+
+
+def teast():
+    #input
+    a = [2342, "dsfg"]
+    correct = cerret_sotr
+
+    #action
+    result = bubble_sort(a)
+
+    #test
+    assert result == correct
+
+
 
 print(f'Before {x}')
 print(f'After {bubble_sort(x)}')

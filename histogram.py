@@ -39,14 +39,12 @@ if __name__ == '__main__':
             if line.split(",")[9].isdigit():
                 storage.append(int(line.split(",")[9]))
     print("Build a pool of 8 processes")
-    pool = Pool(processes=32)
-    print("Fragment the string data into 8 chunks", file=sys.stderr)
-    partitioned_stars = list(chunks(storage, len(storage) // 8))
-    single_count_tuples = pool.map(Map, partitioned_stars)
-    token_to_tuples = Partition(single_count_tuples)
-    #print(token_to_tuples)
-
-    term_frequencies = pool.map(Reduce, token_to_tuples.items())
-    term_frequencies.sort(key=lambda x: x[0])  # nb of stars
+    with Pool(processes=32) as pool:
+    # print("Fragment the string data into 8 chunks", file=sys.stderr)
+        partitioned_stars = list(chunks(storage, len(storage) // 8))
+        single_count_tuples = pool.map(Map, partitioned_stars)
+        token_to_tuples = Partition(single_count_tuples)
+        term_frequencies = pool.map(Reduce, token_to_tuples.items())
+        term_frequencies.sort(key=lambda x: x[0])  # nb of stars
     for pair in term_frequencies[:20]:
         print( "%i occurs %i times" % pair )

@@ -35,9 +35,9 @@ class Calculator():
         return x1, x2
 
 
-calc = Calculator()
-calc.abs(cplx.Complex(2, 3j))
-x1, x2 = calc.solve_equation(cplx.Complex(3), cplx.Complex(-3), cplx.Complex(6))
-
-print(f'X1 = {x1.real + x1.imag}')
-print(f'X2 = {x2.real + x2.imag}')
+if __name__ == '__main__':
+    calc = Calculator()
+    calc.abs(cplx.Complex(2, 3j))
+    x1, x2 = calc.solve_equation("w", -11, 12)
+    print(x1)
+    print(x2)
